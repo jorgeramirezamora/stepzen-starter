@@ -1,0 +1,7 @@
+configurationset:
+  - configuration:
+      name: your_configuration_name
+      yourvariablename: variable_value
+  - configuration:
+      name: your_configuration_name_for_dbquey
+      dsn: database_dsn
