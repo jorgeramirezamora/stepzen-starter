@@ -1,0 +1,49 @@
+type Forecast {
+  detailedForecast: String!
+  endTime: DateTime!
+  name: String!
+  number: Int!
+  shortForecast: String!
+  startTime: DateTime!
+  temperature: Float!
+  temperatureTrend: JSON
+  temperatureUnit: String!
+}
+
+type WXPoint {
+  gridId: String!
+  gridX: Int!
+  gridY: Int!
+}
+
+# Queries
+
+type Query {
+  getForecast(lat: Float!, lng: Float!): [Forecast!]!
+    @sequence(
+      steps: [
+        {
+          query: "getWXPoint"
+        },
+        {
+          arguments: [
+            {
+              field: "gridId",
+              name: "office"
+            }
+          ],
+          query: "getPointForecast"
+        }
+      ]
+    )
+  getPointForecast(office: String!, gridX: Int!, gridY: Int!): [Forecast!]!
+    @rest(
+      endpoint: "https://api.weather.gov/gridpoints/$office/$gridX;,$gridY/forecast",
+      resultroot: "properties.periods[]"
+    )
+  getWXPoint(lat: Float!, lng: Float!): WXPoint!
+    @rest(
+      endpoint: "https://api.weather.gov/points/$lat;,$lng",
+      resultroot: "properties"
+    )
+}

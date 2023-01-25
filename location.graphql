@@ -1,0 +1,30 @@
+type Location {
+  forecast: [Forecast!]!
+    @materializer(
+      query: "getForecast"
+    )
+  lat: Float!
+  lng: Float!
+  title: String!
+}
+
+# Queries
+
+type Query {
+  locate(q: String!): Location!
+    @rest(
+      configuration: "hereapi",
+      endpoint: "https://geocode.search.hereapi.com/v1/geocode?apiKey=$apikey&q=$q",
+      resultroot: "items[]",
+      setters: [
+        {
+          field: "lat",
+          path: "position.lat"
+        },
+        {
+          field: "lng",
+          path: "position.lng"
+        }
+      ]
+    )
+}
